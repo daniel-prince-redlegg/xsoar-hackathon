@@ -1,0 +1,20 @@
+- name: Firewalld Checker
+  hosts: all
+  tasks:
+  - name: Ensure 80 is rejected
+    firewalld:
+      port: 80/tcp
+      permanent: yes
+      state: disabled
+    become: yes
+    register: eighty
+  - name: Ensure 443 is allowed
+    firewalld:
+      port: 443/tcp
+      permanent: yes
+      state: enabled
+    become: yes
+    register: fourfourthree
+  - name: reload service firewalld
+    command: sudo firewall-cmd --reload
+    when: fourfourthree.changed or eighty.changed
